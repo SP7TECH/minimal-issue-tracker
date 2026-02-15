@@ -1,33 +1,83 @@
 @import "tailwindcss";
 
+/* Tailwind v4 theme tokens so classes like bg-dark-base exist */
+@theme {
+  /* Colors mapped to CSS vars for light/dark */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Primary palette */
+  --color-primary-50: #faf5ff;
+  --color-primary-100: #f3e8ff;
+  --color-primary-200: #e9d5ff;
+  --color-primary-300: #d8b4fe;
+  --color-primary-400: #c084fc;
+  --color-primary-500: #a855f7;
+  --color-primary-600: #9333ea;
+  --color-primary-700: #7e22ce;
+  --color-primary-800: #6b21a8;
+  --color-primary-900: #581c87;
+  --color-primary-950: #3b0764;
+
+  /* Dark palette */
+  --color-dark-base: #121212;
+  --color-dark-elevated: #1a1a1a;
+  --color-dark-high: #222222;
+  --color-dark-border-subtle: #2a2a2a;
+  --color-dark-border-default: #333333;
+  --color-dark-border-medium: #444444;
+  --color-dark-border-strong: #555555;
+
+  /* Box shadow token */
+  --shadow-mode:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+
+  /* Font family for font-sans if used */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Primary palette from Tailwind config */
+  --primary-50: #faf5ff;
+  --primary-100: #f3e8ff;
+  --primary-200: #e9d5ff;
+  --primary-300: #d8b4fe;
+  --primary-400: #c084fc;
+  --primary-500: #a855f7;
+  --primary-600: #9333ea;
+  --primary-700: #7e22ce;
+  --primary-800: #6b21a8;
+  --primary-900: #581c87;
+  --primary-950: #3b0764;
+
+  /* Box shadow token from Tailwind config */
+  --shadow-mode:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #121212;
     --foreground: #ededed;
+
+    /* Dark palette tokens from Tailwind config */
+    --dark-base: #121212;
+    --dark-elevated: #1a1a1a;
+    --dark-high: #222222;
+    --dark-border-subtle: #2a2a2a;
+    --dark-border-default: #333333;
+    --dark-border-medium: #444444;
+    --dark-border-strong: #555555;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family:
-    var(--font-inter),
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    "Open Sans",
-    "Helvetica Neue",
-    sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
 }
 
 /* Mode-inspired custom utilities */
@@ -76,5 +126,12 @@ body {
 
   .dark .scrollbar-thin::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Utility to match Tailwind's boxShadow 'mode' */
+@layer utilities {
+  .shadow-mode {
+    box-shadow: var(--shadow-mode);
   }
 }
