@@ -5,7 +5,8 @@ import { cache } from "react";
 import { issues, users } from "@/db/schema";
 import { mockDelay } from "./utils";
 
-export const getUserByEmail = async () => {
+export const getCurrentUser = async () => {
+  await mockDelay(1000);
   const session = await getSession();
   if (!session) return null;
 
@@ -18,6 +19,16 @@ export const getUserByEmail = async () => {
     return result[0] || null;
   } catch (error) {
     console.error("Error getting user by ID:", error);
+    return null;
+  }
+};
+
+export const getUserByEmail = async (email: string) => {
+  try {
+    const result = await db.select().from(users).where(eq(users.email, email));
+    return result[0] || null;
+  } catch (error) {
+    console.error(`Error getting user by email: ${email}`);
     return null;
   }
 };
