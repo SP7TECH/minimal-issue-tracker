@@ -35,3 +35,18 @@ export const getUserByEmail = async (email: string) => {
     return null;
   }
 };
+
+export async function getIssues() {
+  try {
+    const result = await db.query.issues.findMany({
+      with: {
+        user: true,
+      },
+      orderBy: (issues, { desc }) => [desc(issues.createdAt)],
+    });
+    return result;
+  } catch (error) {
+    console.error("Error fetching issues:", error);
+    throw new Error("Failed to fetch issues");
+  }
+}
