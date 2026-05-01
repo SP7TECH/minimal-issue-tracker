@@ -38,6 +38,7 @@ export const getUserByEmail = async (email: string) => {
 
 export async function getIssues() {
   try {
+    await mockDelay(1000);
     const result = await db.query.issues.findMany({
       with: {
         user: true,
