@@ -1,116 +1,69 @@
 # Minimal Issue Tracker
 
-A small issue tracking app I'm building while working through the
-[Next.js Fundamentals v4](https://master.dev/courses/next-js-v4/) course. The idea is simple:
-sign up, raise an issue, give it a status and a priority, and see everything in one list.
-Nothing fancy, the point was to actually use the Next.js features instead of just reading about them.
+A small issue tracking app. Sign up, raise an issue, give it a status and a priority,
+and see everything in one list. Nothing fancy, I built it to get hands-on with the
+newer Next.js features instead of just reading about them.
 
 ![Landing page of the Minimal Issue Tracker](./minimal-issue-app.png)
 
-> Still a work in progress. The landing page, dashboard, database layer and auth are in place.
-> The signup/signin screens and the issue CRUD screens are next on my list.
+> Work in progress. Landing page, dashboard, database layer and auth are in place.
+> The signup/signin screens and issue CRUD are next.
 
-## Topics I covered
+## What I used
 
-These are the course topics I've actually touched in this project so far.
+**Routing & layouts** — App Router, route groups (`app/(marketing)/` keeps the landing page
+at `/`), nested layouts, `next/font` with Inter, Tailwind CSS v4 with a dark theme.
 
-### Setup, routing and styling
+**Server Components** — pages fetch data on the server with plain `async`/`await`.
+`"use client"` only where it's actually needed. `<Suspense>` around the dashboard with a
+skeleton fallback, plus a `mockDelay()` helper so loading states are visible locally.
 
-- App Router with the `app/` directory
-- Route groups, so `app/(marketing)/` holds the public landing page without adding `/marketing` to the URL
-- Nested layouts: a root layout for fonts and metadata, a separate dashboard layout with its own sidebar
-- `next/font` with Inter, loaded as a CSS variable
-- Tailwind CSS v4 for all the styling, with a dark theme
-- A small set of reusable UI pieces (`Button`, `Badge`, `Form`, `NavLink`, `Navigation`)
+**Server Actions** — form handling with `"use server"`, Zod validation on the server, and a
+typed `ActionResponse` carrying field-level errors back to the form.
 
-### Server Components and streaming
+**Auth** — email/password with bcrypt, JWT sessions signed using `jose` and stored in an
+httpOnly cookie, with refresh-on-expiry logic.
 
-- Pages are server components by default, so data fetching happens on the server with plain `async`/`await`
-- `"use client"` only where it's genuinely needed (the footer year, nav link highlighting, sign out button)
-- `<Suspense>` around the dashboard content with a `DashboardSkeleton` fallback
-- `mockDelay()` in `lib/utils.ts` to slow things down on purpose, otherwise loading states are too fast to see locally
+**Data layer** — all reads go through a DAL (`lib/dal.ts`) instead of being scattered across
+components, with React `cache()` on the session lookup. Drizzle ORM over PostgreSQL:
+schema, enums, relations, inferred types. Neon driver on Vercel, node-postgres locally.
 
-### Server Actions
-
-- Form handling with `"use server"` actions in `app/actions/`
-- Zod schemas for validating input on the server, with field level errors sent back to the form
-- Actions return a typed `ActionResponse` so the UI knows what to show
-- `redirect()` after sign out
-
-### Authentication
-
-- Email and password signup, hashed with bcrypt
-- JWT sessions signed with `jose`, stored in an httpOnly cookie
-- Token refresh threshold logic, so a session close to expiry can be renewed
-- `cookies()` from `next/headers` to read and clear the session
-
-### Data Access Layer
-
-- All database reads go through `lib/dal.ts` instead of being scattered across components
-- React `cache()` around `getSession()` so it isn't recomputed on every call within a request
-- Drizzle ORM with PostgreSQL: schema, enums, relations, and inferred types
-- Neon serverless driver on Vercel, node-postgres locally, picked at runtime in `db/index.ts`
-
-## Still to come
-
-The course covers a few more things I haven't reached yet:
-
-- Full CRUD for issues (create, edit, delete) with server actions
-- Caching strategies and `dynamicIO`
-- Route handlers for a small developer API
-- Middleware and edge runtime for protecting routes
-- Vitest tests and deploying to Vercel
+Still to do: full CRUD for issues, caching with `dynamicIO`, route handlers, middleware, and tests.
 
 ## Stack
 
-Next.js 16, React 19, TypeScript, Tailwind CSS v4, Drizzle ORM, PostgreSQL (Neon), Zod, jose, bcrypt, lucide-react.
+Next.js 16, React 19, TypeScript, Tailwind v4, Drizzle ORM, PostgreSQL (Neon), Zod, jose, bcrypt.
 
-## Running it locally
+## Running locally
 
-You'll need Node and a PostgreSQL database. Neon works well and has a free tier.
+Needs Node and a PostgreSQL database (Neon's free tier works fine).
 
 ```bash
 npm install
 ```
 
-Create a `.env` file:
+Create a `.env`:
 
 ```bash
 DATABASE_URL=postgresql://user:password@host/dbname
 JWT_SECRET=any-random-string-at-least-32-characters-long
 ```
 
-Push the schema and start the dev server:
+Then:
 
 ```bash
-npm run db:push
-npm run dev
+npm run db:push   # push the schema
+npm run dev       # http://localhost:3000
+npm run db:studio # browse the data
 ```
 
-Open http://localhost:3000.
-
-Other scripts that come in handy:
-
-```bash
-npm run db:studio   # browse the database in Drizzle Studio
-npm run lint
-npm run build
-```
-
-## Project layout
+## Layout
 
 ```
-app/
-  (marketing)/      landing page, public
-  dashboard/        issue list, behind the sidebar layout
-  actions/          server actions for auth and issues
-components/
-  ui/               buttons, badges, forms, navigation
-db/
-  schema.ts         drizzle tables, enums, relations
-  index.ts          database client
-lib/
-  auth.ts           password hashing, JWT, sessions
-  dal.ts            data access layer
-  utils.ts          cn(), date formatting, mockDelay
+app/(marketing)   landing page
+app/dashboard     issue list
+app/actions       server actions
+components/ui     buttons, badges, forms, navigation
+db                drizzle schema and client
+lib               auth, data access layer, utils
 ```
